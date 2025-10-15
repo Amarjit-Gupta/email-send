@@ -7,34 +7,34 @@ import 'dotenv/config';
 const port = process.env.PORT || 5000;
 const app = express();
 
-console.log("PORT: ", process.env.PORT);
-console.log("EMAIL: ", process.env.SMTP_EMAIL);
-console.log("PASSWORD: ", process.env.SMTP_PASS);
+console.log("SMTP_USER: ", process.env.SMTP_USER);
+console.log("SMTP_PASS: ", process.env.SMTP_PASS);
+console.log("SENDER_EMAIL: ", process.env.SENDER_EMAIL);
 
 app.use(express.json());
 
 app.use(cors());
 
 let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp-relay.brevo.com",
     port: 587,
     secure: false,
     auth: {
-        user: process.env.SMTP_EMAIL,
+        user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
     }
 });
 
 app.post("/send", async (req, res) => {
     try {
-        const { email } = req.body;
-        let maioOption = {
-            from: process.env.SMTP_EMAIL,
+        const { email,message } = req.body;
+        let mailOption = {
+            from: process.env.SENDER_EMAIL,
             to: email,
-            subject: `this email send from ${email}`,
-            html: "<h3>Hello, Amarjit👋</h3>"
+            subject: `this email send to ${email}`,
+            text: message
         }
-        let data = await transporter.sendMail(maioOption);
+        let data = await transporter.sendMail(mailOption);
         return res.status(200).json({ message: "email send successfully...", data });
     }
     catch (err) {
