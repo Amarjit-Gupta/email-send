@@ -7,20 +7,19 @@ import 'dotenv/config';
 const port = process.env.PORT || 5000;
 const app = express();
 
-console.log("SMTP_USER: ", process.env.SMTP_USER);
+console.log("SMTP_EMAIL: ", process.env.SMTP_EMAIL);
 console.log("SMTP_PASS: ", process.env.SMTP_PASS);
-console.log("SENDER_EMAIL: ", process.env.SENDER_EMAIL);
 
 app.use(express.json());
 
 app.use(cors());
 
 let transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
+    host: "smtp.gmail.com",
     port: 465,
     secure: true,
     auth: {
-        user: process.env.SMTP_USER,
+        user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASS
     }
 });
@@ -29,7 +28,7 @@ app.post("/send", async (req, res) => {
     try {
         const { email,message } = req.body;
         let mailOption = {
-            from: process.env.SENDER_EMAIL,
+            from: process.env.SMTP_EMAIL,
             to: email,
             subject: `this email send to ${email}`,
             text: message
